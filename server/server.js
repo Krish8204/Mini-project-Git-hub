@@ -11,7 +11,7 @@ app.use(cors())
 const PORT = process.env.PORT || 3001;
 
 // Connect to MongoDB (make sure MongoDB is running)
-mongoose.connect('mongodb+srv://krishvaghasiya8204:<password>@cluster0.sebxylf.mongodb.net/');
+mongoose.connect('mongodb+srv://krishvaghasiya8204:Rv5XrzlTQvhzGxgh@cluster0.sebxylf.mongodb.net/');
 
 // Middleware
 app.use(bodyParser.json());
