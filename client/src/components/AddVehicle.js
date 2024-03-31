@@ -19,7 +19,7 @@ const AddVehicle = ({ onAddVehicle }) => {
 	const handleAddVehicle = () => {
 		// Submit a new vehicle
 		axios
-			.post("http://localhost:3001/api/cars", newVehicle)
+			.post("https://mini-project-git-hub.onrender.com/api/cars", newVehicle)
 			.then((response) => {
 				// Notify the parent component about the new vehicle
 				onAddVehicle(response.data);
