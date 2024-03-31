@@ -11,7 +11,7 @@ app.use(cors())
 const PORT = process.env.PORT || 3001;
 
 // Connect to MongoDB (make sure MongoDB is running)
-mongoose.connect('mongodb://localhost:27017/vehicle-tracking', {
+mongoose.connect('mongodb+srv://krishvaghasiya8204:<password>@cluster0.sebxylf.mongodb.net/', {
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
 });
