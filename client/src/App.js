@@ -12,7 +12,7 @@ const App = () => {
 
 	useEffect(() => {
 		axios
-			.get("http://localhost:3001/api/cars")
+			.get("https://mini-project-git-hub.onrender.com/api/cars")
 			.then((response) => setVehicles(response.data))
 			.catch((error) => console.error(error));
 	}, []);
@@ -30,7 +30,7 @@ const App = () => {
 	const handleDeleteVehicle = (vehicleId) => {
 		console.log(`Deleting ${vehicleId}`);
 		axios
-			.delete(`http://localhost:3001/api/cars/${vehicleId}`)
+			.delete(`https://mini-project-git-hub.onrender.com/api/cars/${vehicleId}`)
 			.then((response) => {
 				// Filter out the deleted vehicle from the state
 				setVehicles((prevVehicles) =>
@@ -43,8 +43,7 @@ const App = () => {
 	const handleUpdateVehicle = async (updatedVehicle) => {
 		try {
 			const response = await axios.put(
-				`
-http://localhost:3001/api/cars/${updatedVehicle._id}`,
+				`https://mini-project-git-hub.onrender.com/api/cars/${updatedVehicle._id}`,
 				updatedVehicle
 			);
 
