@@ -1,180 +1,87 @@
-//src/components/AddVehicle.js
+// src/App.js
 
+import React, { useState, useEffect } from "react";
+import VehicleList from "./components/VehicleList";
+import AddVehicle from "./components/AddVehicle";
 import axios from "axios";
-import React, { useState } from "react";
+import "./App.css";
 
-const AddVehicle = ({ onAddVehicle }) => {
-	const [newVehicle, setNewVehicle] = useState({
-		companyName: "",
-		distanceCovered: "",
-		mileage: "",
-		serviceDates: "",
-		owner: {
-			name: "",
-			email: "",
-		},
-		image: "",
-	});
+const App = () => {
+	const [vehicles, setVehicles] = useState([]);
+	const [showForm, setShowForm] = useState(false);
 
-	const handleAddVehicle = () => {
-		// Submit a new vehicle
+	useEffect(() => {
 		axios
-			.post("https://mini-project-git-hub.onrender.com/api/cars", newVehicle)
-			.then((response) => {
-				// Notify the parent component about the new vehicle
-				onAddVehicle(response.data);
+			.get("https://mini-project-git-hub.onrender.com/api/cars")
+			.then((response) => setVehicles(response.data))
+			.catch((error) => console.error(error));
+	}, []);
 
-				// Clear the newVehicle state for the next entry
-				setNewVehicle({
-					companyName: "",
-					distanceCovered: "",
-					mileage: "",
-					serviceDates: [],
-					owner: {
-						name: "",
-						email: "",
-					},
-					image: "", // Reset image URL field
-				});
+	const handleAddVehicle = (newVehicle) => {
+		console.log("new vehicle", newVehicle);
+
+		setVehicles((prevVehicles) => [...prevVehicles, newVehicle]);
+	};
+
+	const handleContactOwner = (email) => {
+		alert(`Contacting the owner of  the vehicle at ${email}`);
+	};
+
+	const handleDeleteVehicle = (vehicleId) => {
+		console.log(`Deleting ${vehicleId}`);
+		axios
+			.delete(`https://mini-project-git-hub.onrender.com/api/cars/${vehicleId}`)
+			.then((response) => {
+				// Filter out the deleted vehicle from the state
+				setVehicles((prevVehicles) =>
+					prevVehicles.filter((vehicle) => vehicle._id !== vehicleId)
+				);
 			})
 			.catch((error) => console.error(error));
 	};
 
+	const handleUpdateVehicle = async (updatedVehicle) => {
+		try {
+			const response = await axios.put(
+				`https://mini-project-git-hub.onrender.com/api/cars/${updatedVehicle._id}`,
+				updatedVehicle
+			);
+
+			// Handle the response
+			console.log("Vehicle updated successfully:", response.data);
+
+			// Update the vehicles array with the updated vehicle
+			setVehicles((prevVehicles) =>
+				prevVehicles.map((vehicle) =>
+					vehicle._id === updatedVehicle._id ? response.data : vehicle
+				)
+			);
+		} catch (error) {
+			// Handle errors, e.g., show an error message to the user
+			console.error("Error updating vehicle:", error);
+		}
+	};
+
 	return (
-		<div className="form-container">
-			<h2 style={{ color: "#007BFF", textAlign: "center" }}>
-				Add a New Vehicle
-			</h2>
-			<form
-				onSubmit={(e) => {
-					e.preventDefault();
-					handleAddVehicle();
-				}}
-			>
-				<div className="form-row">
-					<label>
-						Company Name:
-						<input
-							type="text"
-							value={newVehicle.companyName}
-							onChange={(e) =>
-								setNewVehicle({
-									...newVehicle,
-									companyName: e.target.value,
-								})
-							}
-							required
-							className="form-input"
-						/>
-					</label>
-					<label>
-						Distance Covered:
-						<input
-							type="number"
-							value={newVehicle.distanceCovered}
-							onChange={(e) =>
-								setNewVehicle({
-									...newVehicle,
-									distanceCovered: e.target.value,
-								})
-							}
-							required
-							className="form-input"
-						/>
-					</label>
-				</div>
-				<div className="form-row">
-					<label>
-						Mileage:
-						<input
-							type="number"
-							value={newVehicle.mileage}
-							onChange={(e) =>
-								setNewVehicle({
-									...newVehicle,
-									mileage: e.target.value,
-								})
-							}
-							required
-							className="form-input"
-						/>
-					</label>
-					<label>
-						Service Dates (comma-separated):
-						<input
-							type="text"
-							value={newVehicle.serviceDates}
-							onChange={(e) =>
-								setNewVehicle({
-									...newVehicle,
-									serviceDates: e.target.value,
-								})
-							}
-							required
-							className="form-input"
-						/>
-					</label>
-				</div>
-				<div className="form-row">
-					<label>
-						Owner Name:
-						<input
-							type="text"
-							value={newVehicle.owner.name}
-							onChange={(e) =>
-								setNewVehicle({
-									...newVehicle,
-									owner: {
-										...newVehicle.owner,
-										name: e.target.value,
-									},
-								})
-							}
-							required
-							className="form-input"
-						/>
-					</label>
-					<label>
-						Owner Email:
-						<input
-							type="email"
-							value={newVehicle.owner.email}
-							onChange={(e) =>
-								setNewVehicle({
-									...newVehicle,
-									owner: {
-										...newVehicle.owner,
-										email: e.target.value,
-									},
-								})
-							}
-							required
-							className="form-input"
-						/>
-					</label>
-				</div>
-				<div className="form-row">
-					<label>
-						Image URL:
-						<input
-							type="text"
-							value={newVehicle.image}
-							onChange={(e) =>
-								setNewVehicle({
-									...newVehicle,
-									image: e.target.value,
-								})
-							}
-							className="form-input"
-						/>
-					</label>
-				</div>
-				<button type="submit" className="form-button">
-					Add Vehicle
-				</button>
-			</form>
+		<div className="main-container">
+			
+			<h1>Vehicle Tracking System</h1>
+			<button onClick={() => setShowForm(!showForm)}>
+				{showForm ? "Close" : "Add New Vehicle"}
+			</button>
+			<div className="">
+				{showForm && <AddVehicle onAddVehicle={handleAddVehicle} />}
+				{vehicles && (
+					<VehicleList
+						onDeleteVehicle={handleDeleteVehicle}
+						onUpdateVehicle={handleUpdateVehicle}
+						vehicles={vehicles}
+						onContactOwner={handleContactOwner}
+					/>
+				)}
+			</div>
 		</div>
 	);
 };
 
-export default AddVehicle;
+export default App;
